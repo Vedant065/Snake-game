@@ -32,15 +32,14 @@
     <button onclick="togglePause()">⏸ Pause</button>
   </div>
 
-  <!-- Speed Control -->
-  <div class="speed-control">
-    <label>Speed:</label>
-    <select id="speedSelect">
-      <option value="180">Low</option>
-      <option value="120" selected>Normal</option>
-      <option value="70">High</option>
-    </select>
+ <div class="speed-control">
+  <span>Speed:</span>
+  <div class="speed-buttons">
+    <button class="speed-btn" data-speed="180">🐢 Low</button>
+    <button class="speed-btn active" data-speed="120">⚖️ Normal</button>
+    <button class="speed-btn" data-speed="70">⚡ High</button>
   </div>
+</div>
 
   <!-- Mobile Controls -->
   <div class="mobile-controls">
