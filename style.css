@@ -59,7 +59,39 @@ button {
 }
 
 .speed-control {
-  margin-top: 10px;
+  margin-top: 15px;
+  text-align: center;
+}
+
+.speed-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+/* Buttons */
+.speed-btn {
+  padding: 8px 15px;
+  border-radius: 20px;
+  border: none;
+  background: #1f1f1f;
+  color: white;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+/* Hover effect */
+.speed-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 10px #00ffcc;
+}
+
+/* Active button */
+.speed-btn.active {
+  background: linear-gradient(45deg, #00ffcc, #00ccff);
+  color: black;
+  box-shadow: 0 0 15px #00ffcc;
 }
 
 select {
