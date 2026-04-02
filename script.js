@@ -196,9 +196,21 @@ function togglePause() {
   }
 }
 
-// ⚡ SPEED CONTROL
-document.getElementById("speedSelect").addEventListener("change", function () {
-  gameSpeed = parseInt(this.value);
-  clearInterval(gameInterval);
-  gameInterval = setInterval(update, gameSpeed);
+const speedButtons = document.querySelectorAll(".speed-btn");
+
+speedButtons.forEach(btn => {
+  btn.addEventListener("click", () => {
+    // Remove active from all
+    speedButtons.forEach(b => b.classList.remove("active"));
+
+    // Add active to clicked
+    btn.classList.add("active");
+
+    // Set speed
+    gameSpeed = parseInt(btn.dataset.speed);
+
+    // Restart interval
+    clearInterval(gameInterval);
+    gameInterval = setInterval(update, gameSpeed);
+  });
 });
