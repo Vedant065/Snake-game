@@ -58,7 +58,15 @@ button {
   font-size: 16px;
 }
 
-/* Mobile controls */
+.speed-control {
+  margin-top: 10px;
+}
+
+select {
+  padding: 5px;
+  border-radius: 5px;
+}
+
 .mobile-controls {
   margin-top: 10px;
 }
@@ -67,7 +75,6 @@ button {
   font-size: 20px;
 }
 
-/* Hide mobile buttons on desktop */
 @media (min-width: 768px) {
   .mobile-controls {
     display: none;
