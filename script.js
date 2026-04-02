@@ -212,3 +212,10 @@ speedButtons.forEach(btn => {
     gameSpeed = parseInt(btn.dataset.speed);
   });
 });
+function loadLeaderboard() {
+  fetch("http://127.0.0.1:5000/get_scores")
+    .then(res => res.json())
+    .then(data => {
+      console.log("Top Scores:", data);
+    });
+}
