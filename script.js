@@ -5,6 +5,7 @@ const grid = 20;
 let snake, direction, nextDirection, food;
 let score, highScore, gameInterval;
 let isPaused = false;
+let gameSpeed = 120;
 
 // Load High Score
 highScore = localStorage.getItem("highScore") || 0;
@@ -25,7 +26,7 @@ function startGame() {
   isPaused = false;
 
   clearInterval(gameInterval);
-  gameInterval = setInterval(update, 120);
+  gameInterval = setInterval(update, gameSpeed);
 }
 
 // 🍎 FOOD
@@ -88,61 +89,48 @@ function update() {
   draw();
 }
 
-// 🎨 DRAW
+// 🎨 DRAW (WITH FACE 👀)
 function draw() {
   ctx.fillStyle = "#111";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-  snake.forEach((segment, index) => {
-    const x = segment.x;
-    const y = segment.y;
-
-    // 🐍 HEAD
-    if (index === 0) {
-      // Head shape
+  snake.forEach((s, i) => {
+    if (i === 0) {
+      // Head
       ctx.fillStyle = "#00ff88";
       ctx.beginPath();
-      ctx.arc(x + 10, y + 10, 10, 0, Math.PI * 2);
+      ctx.arc(s.x + 10, s.y + 10, 10, 0, Math.PI * 2);
       ctx.fill();
 
-      // 👀 Eyes based on direction
+      // Eyes
       ctx.fillStyle = "black";
 
-      let eyeOffsetX = 0;
-      let eyeOffsetY = 0;
+      let offsetX = 0, offsetY = 0;
+      if (direction.x === grid) offsetX = 4;
+      if (direction.x === -grid) offsetX = -4;
+      if (direction.y === grid) offsetY = 4;
+      if (direction.y === -grid) offsetY = -4;
 
-      if (direction.x === grid) eyeOffsetX = 4;       // Right
-      if (direction.x === -grid) eyeOffsetX = -4;     // Left
-      if (direction.y === grid) eyeOffsetY = 4;       // Down
-      if (direction.y === -grid) eyeOffsetY = -4;     // Up
-
-      // Left eye
       ctx.beginPath();
-      ctx.arc(x + 6 + eyeOffsetX, y + 6 + eyeOffsetY, 2, 0, Math.PI * 2);
-
-      // Right eye
-      ctx.arc(x + 14 + eyeOffsetX, y + 6 + eyeOffsetY, 2, 0, Math.PI * 2);
-
+      ctx.arc(s.x + 6 + offsetX, s.y + 6 + offsetY, 2, 0, Math.PI * 2);
+      ctx.arc(s.x + 14 + offsetX, s.y + 6 + offsetY, 2, 0, Math.PI * 2);
       ctx.fill();
-    }
-
-    // 🐍 BODY
-    else {
+    } else {
       ctx.fillStyle = "#00cc66";
       ctx.beginPath();
-      ctx.arc(x + 10, y + 10, 9, 0, Math.PI * 2);
+      ctx.arc(s.x + 10, s.y + 10, 9, 0, Math.PI * 2);
       ctx.fill();
     }
   });
 
-  // 🍎 FOOD
+  // Food
   ctx.fillStyle = "red";
   ctx.beginPath();
   ctx.arc(food.x + 10, food.y + 10, 8, 0, Math.PI * 2);
   ctx.fill();
 }
 
-// 🎮 KEYBOARD (PC)
+// 🎮 KEYBOARD
 document.addEventListener("keydown", e => {
   if (e.key === "ArrowUp" && direction.y === 0)
     nextDirection = { x: 0, y: -grid };
@@ -157,7 +145,7 @@ document.addEventListener("keydown", e => {
     nextDirection = { x: grid, y: 0 };
 });
 
-// 📱 TOUCH SWIPE (Mobile)
+// 📱 TOUCH
 let startX, startY;
 
 document.addEventListener("touchstart", e => {
@@ -182,7 +170,7 @@ document.addEventListener("touchend", e => {
   }
 });
 
-// 📱 BUTTON CONTROLS
+// 📱 BUTTONS
 function setDirection(dir) {
   if (dir === "UP" && direction.y === 0)
     nextDirection = { x: 0, y: -grid };
@@ -200,10 +188,17 @@ function setDirection(dir) {
 // ⏸ Pause
 function togglePause() {
   if (isPaused) {
-    gameInterval = setInterval(update, 120);
+    gameInterval = setInterval(update, gameSpeed);
     isPaused = false;
   } else {
     clearInterval(gameInterval);
     isPaused = true;
   }
 }
+
+// ⚡ SPEED CONTROL
+document.getElementById("speedSelect").addEventListener("change", function () {
+  gameSpeed = parseInt(this.value);
+  clearInterval(gameInterval);
+  gameInterval = setInterval(update, gameSpeed);
+});
