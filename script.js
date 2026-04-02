@@ -5,7 +5,9 @@ const grid = 20;
 let snake, direction, nextDirection, food;
 let score, highScore, gameInterval;
 let isPaused = false;
-let gameSpeed = 120;
+
+// ✅ FIXED SPEED (balanced values)
+let gameSpeed = 140;
 
 // Load High Score
 highScore = localStorage.getItem("highScore") || 0;
@@ -54,7 +56,7 @@ function update() {
 
   snake.unshift(head);
 
-  // Collision
+  // 💀 COLLISION
   if (
     head.x < 0 || head.y < 0 ||
     head.x >= canvas.width || head.y >= canvas.height ||
@@ -77,7 +79,7 @@ function update() {
     return;
   }
 
-  // Food
+  // 🍎 FOOD LOGIC
   if (head.x === food.x && head.y === food.y) {
     score++;
     document.getElementById("score").innerText = score;
@@ -102,7 +104,7 @@ function draw() {
       ctx.arc(s.x + 10, s.y + 10, 10, 0, Math.PI * 2);
       ctx.fill();
 
-      // Eyes
+      // Eyes 👀
       ctx.fillStyle = "black";
 
       let offsetX = 0, offsetY = 0;
@@ -123,14 +125,14 @@ function draw() {
     }
   });
 
-  // Food
+  // Food 🍎
   ctx.fillStyle = "red";
   ctx.beginPath();
   ctx.arc(food.x + 10, food.y + 10, 8, 0, Math.PI * 2);
   ctx.fill();
 }
 
-// 🎮 KEYBOARD
+// 🎮 KEYBOARD (PC)
 document.addEventListener("keydown", e => {
   if (e.key === "ArrowUp" && direction.y === 0)
     nextDirection = { x: 0, y: -grid };
@@ -145,7 +147,7 @@ document.addEventListener("keydown", e => {
     nextDirection = { x: grid, y: 0 };
 });
 
-// 📱 TOUCH
+// 📱 TOUCH (Mobile Swipe)
 let startX, startY;
 
 document.addEventListener("touchstart", e => {
@@ -170,7 +172,7 @@ document.addEventListener("touchend", e => {
   }
 });
 
-// 📱 BUTTONS
+// 📱 BUTTON CONTROLS
 function setDirection(dir) {
   if (dir === "UP" && direction.y === 0)
     nextDirection = { x: 0, y: -grid };
@@ -185,7 +187,7 @@ function setDirection(dir) {
     nextDirection = { x: grid, y: 0 };
 }
 
-// ⏸ Pause
+// ⏸ PAUSE
 function togglePause() {
   if (isPaused) {
     gameInterval = setInterval(update, gameSpeed);
@@ -196,21 +198,17 @@ function togglePause() {
   }
 }
 
+// ⚡ MODERN SPEED BUTTONS (FIXED)
 const speedButtons = document.querySelectorAll(".speed-btn");
 
 speedButtons.forEach(btn => {
   btn.addEventListener("click", () => {
-    // Remove active from all
-    speedButtons.forEach(b => b.classList.remove("active"));
 
-    // Add active to clicked
+    // UI highlight
+    speedButtons.forEach(b => b.classList.remove("active"));
     btn.classList.add("active");
 
-    // Set speed
+    // Set speed ONLY (no glitch)
     gameSpeed = parseInt(btn.dataset.speed);
-
-    // Restart interval
-    clearInterval(gameInterval);
-    gameInterval = setInterval(update, gameSpeed);
   });
 });
