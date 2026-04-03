@@ -6,10 +6,10 @@ let snake, direction, nextDirection, food;
 let score, highScore, gameInterval;
 let isPaused = false;
 
-// ✅ FIXED SPEED (balanced values)
+// ✅ Balanced speed
 let gameSpeed = 140;
 
-// Load High Score
+// Load High Score (local)
 highScore = localStorage.getItem("highScore") || 0;
 document.getElementById("highScore").innerText = highScore;
 
@@ -64,12 +64,25 @@ function update() {
   ) {
     clearInterval(gameInterval);
 
+    // Save high score locally
     if (score > highScore) {
       highScore = score;
       localStorage.setItem("highScore", highScore);
     }
 
     document.getElementById("highScore").innerText = highScore;
+
+    // ✅ SAVE SCORE TO PYTHON BACKEND
+    fetch("/save_score", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ score: score })
+    });
+
+    // Load leaderboard
+    loadLeaderboard();
 
     document.getElementById("overlayText").innerText =
       "Game Over! Score: " + score;
@@ -79,7 +92,7 @@ function update() {
     return;
   }
 
-  // 🍎 FOOD LOGIC
+  // 🍎 FOOD
   if (head.x === food.x && head.y === food.y) {
     score++;
     document.getElementById("score").innerText = score;
@@ -91,14 +104,13 @@ function update() {
   draw();
 }
 
-// 🎨 DRAW (WITH FACE 👀)
+// 🎨 DRAW
 function draw() {
   ctx.fillStyle = "#111";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
   snake.forEach((s, i) => {
     if (i === 0) {
-      // Head
       ctx.fillStyle = "#00ff88";
       ctx.beginPath();
       ctx.arc(s.x + 10, s.y + 10, 10, 0, Math.PI * 2);
@@ -125,14 +137,14 @@ function draw() {
     }
   });
 
-  // Food 🍎
+  // Food
   ctx.fillStyle = "red";
   ctx.beginPath();
   ctx.arc(food.x + 10, food.y + 10, 8, 0, Math.PI * 2);
   ctx.fill();
 }
 
-// 🎮 KEYBOARD (PC)
+// 🎮 KEYBOARD
 document.addEventListener("keydown", e => {
   if (e.key === "ArrowUp" && direction.y === 0)
     nextDirection = { x: 0, y: -grid };
@@ -147,7 +159,7 @@ document.addEventListener("keydown", e => {
     nextDirection = { x: grid, y: 0 };
 });
 
-// 📱 TOUCH (Mobile Swipe)
+// 📱 TOUCH
 let startX, startY;
 
 document.addEventListener("touchstart", e => {
@@ -172,7 +184,7 @@ document.addEventListener("touchend", e => {
   }
 });
 
-// 📱 BUTTON CONTROLS
+// 📱 BUTTONS
 function setDirection(dir) {
   if (dir === "UP" && direction.y === 0)
     nextDirection = { x: 0, y: -grid };
@@ -198,24 +210,24 @@ function togglePause() {
   }
 }
 
-// ⚡ MODERN SPEED BUTTONS (FIXED)
+// ⚡ SPEED BUTTONS
 const speedButtons = document.querySelectorAll(".speed-btn");
 
 speedButtons.forEach(btn => {
   btn.addEventListener("click", () => {
-
-    // UI highlight
     speedButtons.forEach(b => b.classList.remove("active"));
     btn.classList.add("active");
 
-    // Set speed ONLY (no glitch)
     gameSpeed = parseInt(btn.dataset.speed);
   });
 });
+
+// 🏆 LEADERBOARD
 function loadLeaderboard() {
-  fetch("http://127.0.0.1:5000/get_scores")
+  fetch("/get_scores")   // ✅ FIXED (no localhost)
     .then(res => res.json())
     .then(data => {
       console.log("Top Scores:", data);
-    });
+    })
+    .catch(err => console.error("Leaderboard error:", err));
 }
